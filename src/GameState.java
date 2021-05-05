@@ -56,7 +56,7 @@ public class GameState {
 
     private boolean isFull() {
         for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; i < grid[i].length; j++) {
+            for (int j = 0; j < grid[i].length; j++) {
                 if (grid[i][j] == 0) {
                     return false;
                 }
