@@ -21,25 +21,32 @@ public class Game extends JFrame {
     private MenuPanel menuPanel;
     private MenuPanel pausePanel;
     private int whosTurn = 0;
+    private boolean isInMenu;
 
 
     public Game() {
         gameState = new GameState();
-        label = new JLabel();
-        panel = new Panel(gameState, label);
+        initPanel();
+        isInMenu = true;
         frame = new JFrame("TicTacToe");
         startButton = new JButton("Start");
         restartButton = new JButton("Restart");
         resumeButton = new JButton("Resume");
         exitButton = new JButton("Exit");
         exitButton2 = new JButton("Exit");
-        menuPanel = new MenuPanel();
-        pausePanel = new MenuPanel();
-        pausePanel.add(resumeButton);
-        menuPanel.add(startButton);
-        menuPanel.add(exitButton);
-        pausePanel.add(restartButton);
-        pausePanel.add(exitButton2);
+        initMenuPanels();
+        frame.getContentPane().add(menuPanel, BorderLayout.CENTER);
+        frame.setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.setLocationByPlatform(true);
+        frame.setFocusable(true);
+        frame.setVisible(true);
+    }
+
+    void initPanel() {
+        label = new JLabel();
+        panel = new Panel(gameState, label);
         panel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         panel.setBackground(Color.GRAY);
         label.setPreferredSize(new Dimension(300, 65));
@@ -48,26 +55,23 @@ public class Game extends JFrame {
         label.setHorizontalAlignment(JLabel.CENTER);
         label.setOpaque(true);
         label.setBackground(Color.BLACK);
-        frame.getContentPane().add(menuPanel, BorderLayout.CENTER);
-        frame.setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.setLocationByPlatform(true);
-        frame.setFocusable(true);
-        panel.setVisible(true);
-        frame.setVisible(true);
     }
 
-    public void start() {
+    void initMenuPanels(){
 
-        startButton.addActionListener(e -> {
-            frame.getContentPane().remove(menuPanel);
-            frame.getContentPane().add(BorderLayout.CENTER, panel);
-            frame.getContentPane().add(BorderLayout.SOUTH, label);
-            frame.getContentPane().invalidate();
-            frame.getContentPane().validate();
-        });
+        menuPanel = new MenuPanel();
+        pausePanel = new MenuPanel();
+        pausePanel.add(resumeButton);
+        menuPanel.add(startButton);
+        menuPanel.add(exitButton);
+        pausePanel.add(restartButton);
+        pausePanel.add(exitButton2);
 
+    }
+
+
+
+    void mouseInput(){
         Random random = new Random();
         whosTurn = (int) Math.pow(-1, random.nextInt());
         String value = whosTurn == -1 ? "X" : "O";
@@ -97,57 +101,64 @@ public class Game extends JFrame {
                 panel.repaint();
             }
         });
+    }
+
+    public void start() {
+
+        startButton.addActionListener(e -> {
+            frame.getContentPane().remove(menuPanel);
+            frame.getContentPane().add(BorderLayout.CENTER, panel);
+            frame.getContentPane().add(BorderLayout.SOUTH, label);
+            frame.getContentPane().invalidate();
+            frame.getContentPane().validate();
+            isInMenu = false;
+        });
+        mouseInput();
 
         frame.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 super.keyReleased(e);
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    frame.getContentPane().remove(panel);
-                    frame.getContentPane().remove(label);
-                    frame.getContentPane().add(pausePanel, BorderLayout.CENTER);
-                    frame.getContentPane().invalidate();
-                    frame.getContentPane().validate();
+                    if(!isInMenu) {
+                        frame.getContentPane().remove(panel);
+                        frame.getContentPane().remove(label);
+                        initPanel();
+                        mouseInput();
+                        frame.getContentPane().add(pausePanel, BorderLayout.CENTER);
+                        frame.getContentPane().invalidate();
+                        frame.getContentPane().validate();
+                    }
                 }
             }
         });
 
-        exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-            }
+        exitButton.addActionListener(e -> frame.dispose());
+
+        exitButton2.addActionListener(e -> {
+            frame.dispose();
         });
 
-        exitButton2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.dispose();
-            }
+        restartButton.addActionListener(e -> {
+            gameState = new GameState();
+            initPanel();
+            mouseInput();
+            frame.getContentPane().remove(pausePanel);
+            frame.getContentPane().add(BorderLayout.CENTER, panel);
+            frame.getContentPane().add(BorderLayout.SOUTH, label);
+            frame.getContentPane().invalidate();
+            frame.getContentPane().validate();
+            initMenuPanels();
+
         });
 
-        restartButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                gameState = new GameState();
-                frame.getContentPane().remove(pausePanel);
-                frame.getContentPane().add(BorderLayout.CENTER, panel);
-                frame.getContentPane().add(BorderLayout.SOUTH, label);
-                frame.getContentPane().invalidate();
-                frame.getContentPane().validate();
-
-            }
-        });
-
-        resumeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                frame.getContentPane().remove(pausePanel);
-                frame.getContentPane().add(BorderLayout.CENTER, panel);
-                frame.getContentPane().add(BorderLayout.SOUTH, label);
-                frame.getContentPane().invalidate();
-                frame.getContentPane().validate();
-            }
+        resumeButton.addActionListener(e -> {
+            frame.getContentPane().remove(pausePanel);
+            frame.getContentPane().add(BorderLayout.CENTER, panel);
+            frame.getContentPane().add(BorderLayout.SOUTH, label);
+            frame.getContentPane().invalidate();
+            frame.getContentPane().validate();
+            initMenuPanels();
         });
 
     }
