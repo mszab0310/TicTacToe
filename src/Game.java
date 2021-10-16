@@ -119,8 +119,7 @@ public class Game extends JFrame {
             @Override
             public void keyReleased(KeyEvent e) {
                 super.keyReleased(e);
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    if(!isInMenu) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE && !isInMenu) {
                         frame.getContentPane().remove(panel);
                         frame.getContentPane().remove(label);
                         initPanel();
@@ -128,7 +127,6 @@ public class Game extends JFrame {
                         frame.getContentPane().add(pausePanel, BorderLayout.CENTER);
                         frame.getContentPane().invalidate();
                         frame.getContentPane().validate();
-                    }
                 }
             }
         });

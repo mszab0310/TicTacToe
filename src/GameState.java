@@ -1,5 +1,10 @@
 public class GameState {
     private int[][] grid;
+    private boolean mainDiagWin = false;
+    private boolean secondaryDiagWin = false;
+    private boolean rowWin = false;
+    private boolean columnWin = false;
+
 
     public GameState() {
         grid = new int[3][3];
